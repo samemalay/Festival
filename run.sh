@@ -1,4 +1,4 @@
 #!/bin/bash
 
-export inputFile="/Users/JohnDoe/test/show.json"
+export inputFile="/Users/JohnDoe/test/shows.json"
 sbt "run $inputFile"

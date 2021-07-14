@@ -1,15 +1,9 @@
 package code
 
-import code.model._
-
-import scala.io.Source
 import java.io._
 
+import code.model._
 import play.api.libs.json.Json
-
-import scala.collection.mutable.ListBuffer
-import scala.io.Source
-import scala.util.{Failure, Success, Try}
 
 object Festival extends App {
 
@@ -39,88 +33,106 @@ object Festival extends App {
         val schedStart = sched.start.getMillis
         val schedEnd = sched.finish.getMillis
 
-        //TODO check obvious contiguous cases
-
         if (schedStart >= showEnd || schedEnd <= showStart) //no overlap
           Set(sched, show)
         else if (schedStart < showStart) {
-
           if (schedEnd < showEnd) {
-            val show1 = Show(sched.band, sched.start, show.start, sched.priority)
-            val show3 = Show(show.band, sched.finish, show.finish, show.priority)
-            val show2 = if (show.priority > sched.priority)
-              Show(show.band, show.start, sched.finish, show.priority)
+            if (show.priority > sched.priority)
+              Set(
+                Show(sched.band, sched.start, show.start, sched.priority),
+                show
+              )
             else
-              Show(sched.band, show.start, sched.finish, sched.priority)
-            Set(show1, show2, show3)
+              Set(
+                sched,
+                Show(show.band, sched.finish, show.finish, show.priority)
+              )
           } else if (schedEnd == showEnd) {
-            val show1 = Show(sched.band, sched.start, show.start, sched.priority)
-            val show2 = if (show.priority > sched.priority)
-              Show(show.band, show.start, sched.finish, show.priority)
+            if (show.priority > sched.priority)
+              Set(
+                Show(sched.band, sched.start, show.start, sched.priority),
+                show
+              )
             else
-              Show(sched.band, show.start, sched.finish, sched.priority)
-            Set(show1, show2)
+              Set(
+                sched
+              )
           } else {
-            val show1 = Show(sched.band, sched.start, show.start, sched.priority)
-            val show3 = Show(sched.band, show.finish, sched.finish, sched.priority)
-            val show2 = if (show.priority > sched.priority)
-              Show(show.band, show.start, show.finish, show.priority)
+            if (show.priority > sched.priority)
+              Set(
+                Show(sched.band, sched.start, show.start, sched.priority),
+                show,
+                Show(sched.band, show.finish, sched.finish, sched.priority)
+              )
             else
-              Show(sched.band, show.start, show.finish, sched.priority)
-            Set(show1, show2, show3)
+              Set(
+                sched
+              )
           }
         } else if (schedStart == showStart) {
-          //TODO total 3 cases
           if (schedEnd < showEnd) {
-            val show1 = Show(show.band, sched.finish, show.finish, show.priority)
-            val show2 = if (show.priority > sched.priority)
-              Show(show.band, sched.finish, show.finish, show.priority)
+            if (show.priority > sched.priority)
+              Set(
+                show
+              )
             else
-              Show(sched.band, sched.finish, show.finish, sched.priority)
-            Set(show1, show2)
+              Set(
+                sched,
+                Show(show.band, sched.finish, show.finish, show.priority)
+              )
           } else if (schedEnd == showEnd) {
-            val show1 = if (show.priority > sched.priority)
-              Show(show.band, show.start, show.finish, show.priority)
+            if (show.priority > sched.priority)
+              Set(
+                show
+              )
             else
-              Show(sched.band, show.start, show.finish, sched.priority)
-            Set(show1)
+              Set(
+                sched
+              )
           } else {
-            val show1 = Show(sched.band, show.finish, sched.finish, sched.priority)
-            val show2 = if (show.priority > sched.priority)
-              Show(show.band, show.start, show.finish, show.priority)
-            else //TODO in this case shouldn't it be continuous ?
-              Show(sched.band, sched.start, show.finish, sched.priority)
-            Set(show1, show2)
+            if (show.priority > sched.priority)
+              Set(
+                show,
+                Show(sched.band, show.finish, sched.finish, sched.priority)
+              )
+            else
+              Set(
+                sched
+              )
           }
         } else { //schedStart > startTime
-          //TODO total 3 cases
           if (schedEnd < showEnd) {
-            //TODO need to check / change
-            val show1 = Show(show.band, show.start, sched.start, show.priority)
-            val show3 = Show(show.band, sched.finish, show.finish, show.priority)
-            //TODO may be contiguous (all 3 1 show)
-            val show2 = if (show.priority > sched.priority)
-              Show(show.band, sched.start, sched.finish, show.priority)
+            if (show.priority > sched.priority)
+              Set(
+                show
+              )
             else
-              Show(sched.band, sched.start, sched.finish, sched.priority)
-            Set(show1, show2, show3)
+              Set(
+                Show(show.band, show.start, sched.start, show.priority),
+                sched,
+                Show(show.band, sched.finish, show.finish, show.priority)
+              )
           } else if (schedEnd == showEnd) {
-            //TODO need to check / change
-            val show1 = Show(sched.band, sched.start, show.start, sched.priority)
-            val show2 = if (show.priority > sched.priority)
-              Show(show.band, show.start, sched.finish, show.priority)
+            if (show.priority > sched.priority)
+              Set(
+                show
+              )
             else
-              Show(sched.band, show.start, sched.finish, sched.priority)
-            Set(show1, show2)
+              Set(
+                Show(show.band, show.start, sched.start, show.priority),
+                sched
+              )
           } else {
-            //TODO need to check / change
-            val show1 = Show(sched.band, sched.start, show.start, sched.priority)
-            val show3 = Show(show.band, sched.finish, show.finish, show.priority)
-            val show2 = if (show.priority > sched.priority)
-              Show(show.band, show.start, sched.finish, show.priority)
+            if (show.priority > sched.priority)
+              Set(
+                show,
+                Show(sched.band, show.finish, sched.finish, sched.priority)
+              )
             else
-              Show(sched.band, show.start, sched.finish, sched.priority)
-            Set(show1, show2, show3)
+              Set(
+                Show(show.band, show.start, sched.start, show.priority),
+                sched
+              )
           }
 
         }
