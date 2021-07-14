@@ -9,12 +9,12 @@ import org.scalatest.flatspec.AnyFlatSpec
 class ParserTest extends AnyFlatSpec with Matchers {
 
   "The App" should "read Show json correctly" in {
-    val shows = JsonUtil.showFrom("shows.json")
+    val shows = JsonUtil.showFrom("src/test/resources/shows.json")
     shows(0).priority should be (5)
   }
 
   "The App" should "read Plan json correctly" in {
-    val plans = JsonUtil.planFrom("plans.json")
+    val plans = JsonUtil.planFrom("src/test/resources/plans.json")
     plans(1).band should be ("Pearl Jam")
   }
 

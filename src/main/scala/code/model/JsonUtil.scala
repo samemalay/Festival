@@ -8,11 +8,9 @@ import scala.util.{Failure, Success, Try}
 
 object JsonUtil {
 
-  val dirPath = "src/test/resources/"
+  def showFrom(fileName: String): List[Show] = {
 
-  def showFrom(fileName: String)(implicit dirPath: String = dirPath): List[Show] = {
-
-    val tryToReadStringFromFile = Try(Source.fromFile(dirPath + fileName).getLines.mkString)
+    val tryToReadStringFromFile = Try(Source.fromFile(fileName).getLines.mkString)
 
     tryToReadStringFromFile map { mayBeJsonString =>
       Json.parse(mayBeJsonString).validate[List[Show]] match {
@@ -33,9 +31,9 @@ object JsonUtil {
     }
   }
 
-  def planFrom(fileName: String)(implicit dirPath: String = dirPath): List[Plan] = {
+  def planFrom(fileName: String): List[Plan] = {
 
-    val tryToReadStringFromFile = Try(Source.fromFile(dirPath + fileName).getLines.mkString)
+    val tryToReadStringFromFile = Try(Source.fromFile(fileName).getLines.mkString)
 
     tryToReadStringFromFile map { mayBeJsonString =>
       Json.parse(mayBeJsonString).validate[List[Plan]] match {
