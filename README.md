@@ -9,5 +9,10 @@ Please have Scala/SBT installed properly in the machine where it is going to be 
 
 
 ## execution
-This can be executed by running the run.sh from the directory.
-edit the same to put porper value to the inputFile
+1. Edit the run.sh file to put proper value to the inputFile 
+(make sure the file exists in the location and is in correct json format)
+2. Save and execute the run.sh script from command prompt (Mac/Linux)
+
+Note - It is advisable to run the unit tests from sbt prompt rather than directly from IDE, 
+but if you do, please rebuild the project first after cloning from GitHub.
+
